@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 #
 #  Minio Cloud Storage, (C) 2017 Minio, Inc.
 #
@@ -18,10 +18,20 @@
 export MINT_ROOT_DIR=${MINT_ROOT_DIR:-/mint}
 source "${MINT_ROOT_DIR}"/source.sh
 
+git config --global http.proxy "$http_proxy"
+git config --global https.proxy "$https_proxy"
+
 # install mint app packages
 for pkg in "$MINT_ROOT_DIR/build"/*/install.sh; do
 	echo "Running $pkg"
-	$pkg
+	RETRIES=0
+	while [ $RETRIES -lt 5 ]; do
+		if $pkg; then
+			break
+		fi
+		sleep 60
+		let RETRIES+=1 || true
+	done
 done
 
-"${MINT_ROOT_DIR}"/postinstall.sh
+#"${MINT_ROOT_DIR}"/postinstall.sh

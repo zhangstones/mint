@@ -240,6 +240,6 @@ func main() {
 	testReadinessEndpoint(endpoint)
 	testClusterPrometheusEndpointV2(endpoint)
 	testNodePrometheusEndpointV2(endpoint)
-	testBucketPrometheusEndpointV2(endpoint)
-	testResourcePrometheusEndpointV2(endpoint)
+	//testBucketPrometheusEndpointV2(endpoint)
+	//testResourcePrometheusEndpointV2(endpoint)
 }

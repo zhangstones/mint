@@ -17,9 +17,10 @@
 
 export MINT_RUN_CORE_DIR="$MINT_ROOT_DIR/run/core"
 export MINT_RUN_BUILD_DIR="$MINT_ROOT_DIR/build"
-export APT="apt --quiet --yes"
-export WGET="wget --quiet --no-check-certificate"
-export WGET="wget --quiet --no-check-certificate"
+export APT="apt-get --yes"
+#export APT="apt-get --quiet --yes"
+export WGET="wget --no-verbose --no-check-certificate"
+#export WGET="wget --quiet --no-check-certificate"
 
 ## Software versions
 export GO_VERSION="1.21.9"

@@ -20,7 +20,10 @@ test_run_dir="$MINT_RUN_CORE_DIR/aws-sdk-java-v2"
 cd "$(dirname "$(realpath "$0")")"
 
 gradle wrapper
-./gradlew clean build
+
+cp -f gradle-wrapper.properties gradle/wrapper/
+
+./gradlew build
 
 cp app/build/libs/FunctionalTests.jar "$test_run_dir/"
 

@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 #
 #  Mint (C) 2017-2022 Minio, Inc.
 #
@@ -17,40 +17,31 @@
 
 source "${MINT_ROOT_DIR}"/source.sh
 
-# install nodejs source list
-if ! $WGET --output-document=- https://deb.nodesource.com/setup_20.x | bash -; then
-	echo "unable to set nodejs repository"
-	exit 1
-fi
-
-$APT install apt-transport-https
-
-if ! $WGET --output-document=packages-microsoft-prod.deb https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb | bash -; then
-	echo "unable to download dotnet packages"
-	exit 1
-fi
-
-dpkg -i packages-microsoft-prod.deb
-rm -f packages-microsoft-prod.deb
-
 $APT update
-$APT install gnupg ca-certificates unzip busybox
+
+RETRIES=0
+while [ $RETRIES -lt 10 ]; do
+	if xargs --arg-file="${MINT_ROOT_DIR}/install-packages.list" -n 1 $APT --no-install-recommends --no-install-suggests install; then
+		break
+	fi
+	sleep 60
+	let RETRIES+=1 || true
+done
 
 # download and install golang
-download_url="https://storage.googleapis.com/golang/go${GO_VERSION}.linux-amd64.tar.gz"
-if ! $WGET --output-document=- "$download_url" | tar -C "${GO_INSTALL_PATH}" -zxf -; then
+download_url="https://mirrors.aliyun.com/golang/go${GO_VERSION}.linux-amd64.tar.gz"
+if ! $WGET -t 3 --waitretry=30 --output-document=- "$download_url" | tar -C "${GO_INSTALL_PATH}" -zxf -; then
 	echo "unable to install go$GO_VERSION"
 	exit 1
 fi
 
-xargs --arg-file="${MINT_ROOT_DIR}/install-packages.list" apt --quiet --yes install
-
 # set python 3.10 as default
 update-alternatives --install /usr/bin/python python /usr/bin/python3.10 1
+update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.10 1
 
 mkdir -p ${GRADLE_INSTALL_PATH}
-gradle_url="https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip"
-if ! $WGET --output-document=- "$gradle_url" | busybox unzip -qq -d ${GRADLE_INSTALL_PATH} -; then
+gradle_url="https://github.com/gradle/gradle-distributions/releases/download/v8.5.0/gradle-${GRADLE_VERSION}-bin.zip"
+if ! $WGET -t 3 --waitretry=30 --output-document=- "$gradle_url" | busybox unzip -qq -d ${GRADLE_INSTALL_PATH} -; then
 	echo "unable to install gradle-${GRADLE_VERSION}"
 	exit 1
 fi

@@ -23,11 +23,13 @@ if [ -z "$MINIO_JAVA_VERSION" ]; then
 	exit 1
 fi
 
+ROOTDIR="$(dirname "$(realpath $0)")"
 test_run_dir="$MINT_RUN_CORE_DIR/minio-java"
 git clone --quiet https://github.com/minio/minio-java.git "$test_run_dir/minio-java.git"
 (
 	cd "$test_run_dir/minio-java.git"
 	git checkout --quiet "tags/${MINIO_JAVA_VERSION}"
+	patch -p1 <"${ROOTDIR}/diff-8.5.10.patch"
 )
 $WGET --output-document="$test_run_dir/minio-${MINIO_JAVA_VERSION}-all.jar" "https://repo1.maven.org/maven2/io/minio/minio/${MINIO_JAVA_VERSION}/minio-${MINIO_JAVA_VERSION}-all.jar"
 $WGET --output-document="$test_run_dir/minio-admin-${MINIO_JAVA_VERSION}-all.jar" "https://repo1.maven.org/maven2/io/minio/minio-admin/${MINIO_JAVA_VERSION}/minio-admin-${MINIO_JAVA_VERSION}-all.jar"

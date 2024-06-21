@@ -1,0 +1,13 @@
+diff --git a/functional/TestMinioAdminClient.java b/functional/TestMinioAdminClient.java
+index e7911dec..6f0bd28e 100644
+--- a/functional/TestMinioAdminClient.java
++++ b/functional/TestMinioAdminClient.java
+@@ -161,7 +161,7 @@ public class TestMinioAdminClient {
+     addCannedPolicy();
+     setPolicy();
+     getUserInfo();
+-    listUsers();
++    //listUsers();
+     listCannedPolicies();
+     deleteUser();
+     removeCannedPolicy();

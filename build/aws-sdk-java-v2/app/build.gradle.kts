@@ -14,6 +14,10 @@ plugins {
 
 repositories {
     // Use Maven Central for resolving dependencies.
+    maven(url="https://maven.aliyun.com/repository/central")
+    maven(url="https://maven.aliyun.com/repository/jcenter")
+    maven(url="https://maven.aliyun.com/repository/google")
+    maven(url="https://maven.aliyun.com/repository/public")
     mavenCentral()
 }
 
